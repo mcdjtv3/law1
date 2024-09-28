@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - Business Law Basics</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "What is the difference between laws and law?", choices: ["Laws are part of the legal system, and law encompasses all laws, regulations, and jurisprudence.", "Laws are specific to a country, and law refers to international agreements.", "Laws are informal guidelines, and law is codified rules.", "Laws are temporary, and law is permanent."], correct: 0 },
+        { question: "Civil law originated from which legal system?", choices: ["English Common Law", "Roman Law, particularly the Code of Justinian", "American Constitutional Law", "European Union Law"], correct: 1 },
+        { question: "What is a code in the context of civil law?", choices: ["A set of precedents established by judges", "A comprehensive text adopted as a way of life or order", "A temporary law enacted during emergencies", "A guideline suggested by the government"], correct: 1 },
+        { question: "Which legal system is based on case-based judgments and precedents?", choices: ["Civil Law", "Canon Law", "Common Law", "International Law"], correct: 2 },
+        { question: "What are precedents in common law?", choices: ["Legislative acts passed by parliament", "Case-based decisions made by judges that influence future cases", "Constitutional articles", "Unwritten customs followed by the judiciary"], correct: 1 },
+        { question: "In civil law, how are codes implemented?", choices: ["By judicial precedents", "Through regulations, ordinances, and other government texts", "By informal guidelines", "By treaties between nations"], correct: 1 },
+        { question: "What is the role of courts in civil law systems?", choices: ["To create laws", "To apply code articles to cases and form jurisprudence", "To set regulations for the government", "To amend statutes"], correct: 1 },
+        { question: "Which of the following is not characteristic of Common Law?", choices: ["Statutes are used sparingly", "Legal decisions are based on precedents", "Judges have a central role in shaping the law", "Laws are codified in comprehensive texts"], correct: 3 },
+        { question: "In Common Law, how are laws interpreted?", choices: ["Through codified statutes", "Based on parliamentary debates", "Through decisions made by courts in specific cases", "By international agreements"], correct: 2 },
+        { question: "Which system of law was developed based on the Napoleonic Code?", choices: ["Common Law", "Civil Law", "Canon Law", "Islamic Law"], correct: 1 },
+        { question: "In Common Law, what is the significance of a judge's decision?", choices: ["It is purely advisory", "It can serve as a precedent for future cases", "It can be ignored by future judges", "It can only apply to criminal cases"], correct: 1 },
+        { question: "Which legal system is dominant in England and former British colonies?", choices: ["Civil Law", "Customary Law", "Common Law", "Canon Law"], correct: 2 },
+        { question: "What is jurisprudence?", choices: ["The code of laws in civil law systems", "The theory or philosophy of law, including court decisions", "Laws passed by parliament", "A type of legal doctrine found only in international law"], correct: 1 },
+        { question: "In Civil Law, how are court decisions used in subsequent cases?", choices: ["They form binding precedents for future cases", "They are not influential on future cases", "They provide informative and influential guidance", "They are ignored unless codified"], correct: 2 },
+        { question: "Which legal system relies heavily on statutes and codes?", choices: ["Common Law", "Civil Law", "Customary Law", "Tribal Law"], correct: 1 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+
+</html>
